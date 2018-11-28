@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     var now = new Date().toDateString();
     var log =`${now}: ${req.method} ${req.url}`;
     console.log(log);
-    
+     
 fs.appendFile('server.log', log + '\n', (err) => {
 if(err){
     console.log('unable to append to server.log');
