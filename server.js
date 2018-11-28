@@ -11,7 +11,7 @@ const fs = require('fs');
 //handlebars are used to deal with html pages instead of .html we define .hbs
 const hbs = require('hbs');
 
-
+const port = process.env.PORT || 3000;
 //helpers for handlers is Partials
 hbs.registerPartials(__dirname + '/partials');
 
@@ -73,6 +73,6 @@ res.render('about.hbs',{
 
 //listen is used to run the application in browser using the localhost: port with corresponding port number 
 
-app.listen(3000, () => {
-    console.log('Listening on port 3000');
+app.listen(port, () => {
+    console.log(`Listening on port: ${port}`);
 });
