@@ -1,78 +1,57 @@
-//express is a middle ware you can go through express-js.com for how to wiring middleware and how to use it
-
 const express = require('express');
-
-// After requiring express we need to initiate express as function() and assign it to a const
-const app = express();
-
-
-//to handle file system we require fs module from npm
-const fs = require('fs');
-//handlebars are used to deal with html pages instead of .html we define .hbs
 const hbs = require('hbs');
+const fs = require('fs');
 
 const port = process.env.PORT || 3000;
-//helpers for handlers is Partials
-hbs.registerPartials(__dirname + '/partials');
 
-//we need to specify app.set() to use hbs
+var app = express();
 
+hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs');
-// To use the middleware we need to define .use() 
-app.use(express.static(__dirname + '/public'));
 
-
-//setting middleware
 app.use((req, res, next) => {
-    var now = new Date().toDateString();
-    var log =`${now}: ${req.method} ${req.url}`;
-    console.log(log);
-     
-fs.appendFile('server.log', log + '\n', (err) => {
-if(err){
-    console.log('unable to append to server.log');
-}
-});
+  // var now = new Date().toString();
+  // var log = `${now}: ${req.method} ${req.url}`;
 
-next();
+  // console.log(log);
+  // fs.appendFile('server.log', log + '\n');
+  next();
 });
 
 // app.use((req, res, next) => {
-//     res.render('maintenance.hbs');
+//   res.render('maintenance.hbs');
 // });
+
+app.use(express.static(__dirname + '/public'));
+
 hbs.registerHelper('getCurrentYear', () => {
-    return new Date().getFullYear();
+  return new Date().getFullYear();
 });
 
 hbs.registerHelper('screamIt', (text) => {
-    return 'hello';
+  return text.toUpperCase();
 });
 
-//here in the browser , user can request for the home page the express with send back as a response in the res.send() function we can send as JSON object or html page ....
 app.get('/home', (req, res) => {
-    res.render('home.hbs', {
-       // CurrentYear: new Date().getFullYear()
-       Pagename: 'HOME Page'
-    });
+  res.render('home.hbs', {
+    pageTitle: 'Home Page',
+    welcomeMessage: 'Welcome to my website'
+  });
 });
 
-
-//response send it as object
-
-//we use res.render for hbs pages accessing instead of res.send
 app.get('/about', (req, res) => {
-res.render('about.hbs',{
-    name: 'Aditya',
-    Description: 'TECH freak',
-    likes: [
-        'Morning person',
-        'Day dreamer'
-    ]
-});
+  res.render('about.hbs', {
+    pageTitle: 'About Page'
+  });
 });
 
-//listen is used to run the application in browser using the localhost: port with corresponding port number 
+// /bad - send back json with errorMessage
+app.get('/bad', (req, res) => {
+  res.send({
+    errorMessage: 'Unable to handle request'
+  });
+});
 
 app.listen(port, () => {
-    console.log(`Listening on port: ${port}`);
+  console.log(`Server is up on port ${port} `);
 });
